@@ -1,4 +1,5 @@
 <?php
+session_start();
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,6 +50,7 @@
 
         input[type="text"],
         input[type="contact"],
+        input[type= "address"],
         input[type="email"],
         input[type="date"],
         input[type="password"] {
@@ -86,6 +88,11 @@
             height: 38px;
             width: -webkit-fill-available;
         }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
     </style>
 
     </head>
@@ -93,15 +100,26 @@
 
     <div class="container">
 
-        <form action="" id="signupForm">
+        <form method="POST" action="register1.php" id="signupForm">
             <h2 algin="center">Register/ Sign Up</h2>
+             <?php
+            if(isset($_SESSION['error'])){
+             foreach($_SESSION['error'] as $error){
+                echo $error;
+                echo "<br>";
+             }
+            }
+            ?>
             <span class="error" ></span><br>
 
-            <label for="uname">Username</label>
-            <input type="text" name="uname" id="uname" class="uname"><br><br>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" class="username"><br><br>
 
             <label for="email">Email</label>
             <input type="text" name="email" id="email" class="email"><br><br>
+
+            <label for="address">Address</label>
+            <input type="text" name="address" class="address" id="address"><br><br>
 
              <label>Gender</label>
             <div class="gender-box">
@@ -120,7 +138,9 @@
             <option value="BBS">Bachelor of Business Studies</option>
             <option value="BBA">Bachelor of Business Administration</option>
         </select><br><br>
-
+        
+        <label for="contact">Contact</label>
+        <input type="text" name="contact" id="contact" class="contact"><br><br>
 
             <label for="password">Password</label>
             <input type="password" name="password" id="password" placeholder="Enter Password"><br><br>
@@ -128,22 +148,24 @@
             <label for="confirm_password">Confirm Password</label>
             <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password"><br><br>
 
-            <input type="submit" value="Submit" class="Submit-btn" id="Submit-btn">
+            <input type="submit" value="Submit" name="submit" class="Submit-btn" id="Submit-btn">
        </form>
     </div>
     <script>
        document.getElementById('signupForm').onsubmit = function (e){
-           //alert("Form submitted");
+           
            e.preventDefault();
-           //console.log("Form Submitted");
+          
            let errDiv = document.querySelector('.error');
            let errorMessages = [];
 
-           let Username= document.getElementById('uname').value.trim();
+           let Username= document.getElementById('username').value.trim();
            let Email= document.getElementById('email').value.trim();
+           let Address= document.getElementById('address').value.trim();
            let Gender = document.querySelector('input[name="gender"]:checked');
            let DOB= document.getElementById('dob').value.trim();
            let Faculty= document.getElementById('faculty').value.trim();
+           let Contact= document.getElementById('contact').value.trim();
            let Password= document.getElementById('password').value.trim();
            let ConfirmPassword= document.getElementById('confirm_password').value.trim();
 
@@ -160,13 +182,10 @@
              errorMessages.push("Email format is invalid.");
            }
 
-        //    if(Email === ""){
-        //     errorMessages.push("Email is required.");
-        //    }else if(!Email.includes("@") || !Email.includes(".")){
-        //     errorMessages.push("Email must contain '@' symbol and'.' symbol.");
-        //    }
+           if(Address === ""){
+            errorMessages.push("Address is required.");
+           }
 
-            console.log(Gender);
            if(Gender === null){
             errorMessages.push("Gender is required.");
            }
@@ -186,12 +205,28 @@
             if(Faculty === ""){
             errorMessages.push("Faculty is required.");
            }
+
+           if(Contact === ""){
+            errorMessages.push("Contact is required.");
+           }else if(isNaN(Contact) && Contact.length < 10){
+            errorMessages.push("Contact Number must be numeric and at least 10 digitals long.");
+           }
            
+           function validatePassword(Password) {
+            
+            const passwordRegex = /^(?=.*\d)(?=.*@)[A-Za-z\d@]{8,}$/;
+
            if(Password === ""){
             errorMessages.push("Password is required.");
-           }else if(Password.length < 5){
+           }else if(Password.length < 8){
             errorMessages.push("Password must be at least 8 characters long.");
+           }else if(!passwordRegex.test(Password)){
+             errorMessages.push("Password format is invalid.");
            }
+        
+    
+        }
+        validatePassword(Password);
            
             if(ConfirmPassword === ""){
             errorMessages.push("ConfirmPassword is required.");
@@ -201,7 +236,9 @@
 
             if(errorMessages.length > 0){
             errDiv.innerHTML = errorMessages.join("<br>");
+            
            }else{
+           signupForm.submit();
             errDiv.innerHTML = "Registration Success";
            }
        }

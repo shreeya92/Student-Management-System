@@ -1,3 +1,7 @@
+
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,16 +46,29 @@
         .btn:hover {
             background: #45a049;
         }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
 
-        <form action="" id="signupForm">
+        <form method="POST" action="login.php" id="signupForm">
             <h2 algin="center">Register/ Sign Up</h2>
+              <?php
+            if(isset($_SESSION['error'])){
+             foreach($_SESSION['error'] as $error){
+                echo $error;
+                echo "<br>";
+             }
+            }
+            ?>
             <span class="error" ></span><br>
-    <label for="name">Username</label>
-    <input type="text" name="uname" class="uname" id="uname"><br>
+    <label for="name">Email</label>
+    <input type="text" name="email" class="email" id="email"><br>
 
     <label for="password">Password</label>
     <input type="password" name="password" class="password" id="password"><br>
@@ -71,13 +88,16 @@
            let errDiv = document.querySelector('.error');
            let errorMessages = [];
 
-           let Username= document.getElementById('uname').value.trim();
+           let Email= document.getElementById('email').value.trim();
            let Password= document.getElementById('password').value.trim();
 
-            if(Username === ""){
-            errorMessages.push("Username is required.");
-           }else if(Username.length < 5){
-            errorMessages.push("Invalid username. ");
+           const passwordPattern = /^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]{2,3}$/;
+            if(Email === ""){
+            errorMessages.push("Email is required.");
+        //    }else if(Email.length < 5){
+        //     errorMessages.push("Invalid username. ");
+           }else if(!passwordPattern.test(Email)){
+             errorMessages.push("Format is invalid.");
            }
 
            if(Password === ""){

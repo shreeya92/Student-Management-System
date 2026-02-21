@@ -1,6 +1,6 @@
 <?php
 session_start();
-// var_dump();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +16,8 @@ session_start();
          
         body {
             font-family: Arial, sans-serif;
-                background-image: url(project.jpg);
+                /* background-image: url(classroom.png); */
+                background: #efcccc;
     background-repeat: no-repeat;
     background-size: cover;
             margin: 0;
@@ -50,6 +51,7 @@ session_start();
 
         input[type="text"],
         input[type="contact"],
+        input[type="address"],
         input[type="gender"],
         input[type="email"],
         input[type="date"],
@@ -103,14 +105,18 @@ session_start();
                 echo "<br>";
              }
             }
+            // unset($_SESSION['error']);
             ?>
             <span class="error" ></span><br>
 
-            <label for="uname">Username</label>
-            <input type="text" name="uname" id="uname" class="uname"><br><br>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" class="username"><br><br>
 
             <label for="email">Email</label>
             <input type="text" name="email" id="email" class="email"><br><br>
+
+            <label for="address">Address</label>
+            <input type="text" name="address" id="address" class="address"><br><br>
 
              <label>Gender</label>
             <div class="gender-box">
@@ -131,19 +137,20 @@ session_start();
             <label for="confirm_password">Confirm Password</label>
             <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password"><br><br>
 
-            <input type="submit" value="Submit" class="Submit-btn" id="Submit-btn">
+            <input type="submit" value="Submit" name="submit" class="Submit-btn" id="Submit-btn">
        </form>
     </div>
     <script>
        document.getElementById('signupForm').onsubmit = function (e){
-           //alert("Form submitted");
-           e.preventDefault();
-           //console.log("Form Submitted");
+          
+          e.preventDefault();
+           
            let errDiv = document.querySelector('.error');
            let errorMessages = [];
 
-           let Username= document.getElementById('uname').value.trim();
+           let Username= document.getElementById('username').value.trim();
            let Email= document.getElementById('email').value.trim();
+           let Address = document.getElementById('address').value.trim();
            let Gender = document.querySelector('input[name="gender"]:checked');
            let DOB= document.getElementById('dob').value.trim();
            let Contact= document.getElementById('contact').value.trim();
@@ -152,8 +159,8 @@ session_start();
 
             if(Username === ""){
             errorMessages.push("Username is required.");
-           }else if(Username.length < 5){
-            errorMessages.push("Username must be at least 5 characters long.");
+           }else if(Username.length < 8){
+            errorMessages.push("Username must be at least 8 characters long.");
            }
 
            const passwordPattern = /^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]{2,3}$/;
@@ -163,13 +170,10 @@ session_start();
              errorMessages.push("Email format is invalid.");
            }
 
-        //    if(Email === ""){
-        //     errorMessages.push("Email is required.");
-        //    }else if(!Email.includes("@") || !Email.includes(".")){
-        //     errorMessages.push("Email must contain '@' symbol and'.' symbol.");
-        //    }
+           if(Address === ""){
+            errorMessages.push("Address is required.");
+           }
 
-            console.log(Gender);
            if(Gender === null){
             errorMessages.push("Gender is required.");
            }
@@ -188,43 +192,31 @@ session_start();
 
             if(Contact === ""){
             errorMessages.push("Contact is required.");
-           }else if(isNaN(Contact) || Contact.length < 10){
+           }else if(isNaN(Contact) && Contact.length < 10){
             errorMessages.push("Contact Number must be numeric and at least 10 digitals long.");
            }
            
-           console.log(Password);
+           console.log((Password));
            function validatePassword(Password) {
-            const errorMessages = [];
-
             const passwordRegex = /^(?=.*\d)(?=.*@)[A-Za-z\d@]{8,}$/;
 
-            if (Password === "") {
-                errorMessages.push("Password is required.");
-            } else if (!passwordRegex.test(Password)) {
-               errorMessages.push("Password must be at least 8 characters long and contain at least one number and one '@' symbol.");
-            }
+           if(Password === ""){
+            errorMessages.push("Password is required.");
+           }else if(Password.length < 8){
+            errorMessages.push("Password must be at least 8 characters long.");
+           }else if(!passwordRegex.test(Password)){
+             errorMessages.push("Password format is invalid.");
            }
-
-        //    const password = /^[a-zA-Z0-9]+@[a-zA-Z]$/;
-        //    if(Password === ""){
-        //     errorMessages.push("Password is required.");
-        //    }else if(Password.length < 5){
-        //     errorMessages.push("Password must be at least 8 characters long.");
-        //    }else if(!password.test(Password)){
-        //      errorMessages.push("Password format is invalid.");
-        //    }
-        //    }else if(!Email.include("Special character") || !Email.include("Number")){
-        //        errorMessages.push("Password must contain special character '@' and '0-9'.");
     
-           
+        }
+        validatePassword(Password);
            
             if(ConfirmPassword === ""){
-            errorMessages.push("ConfirmPassword is required.");
+            errorMessages.push("Confirm Password is required.");
            }else if(!ConfirmPassword===Password){
-            errorMessages.push("ConfirmPassword is not same as Password");
+            errorMessages.push("Confirm Password is not same as Password");
            }
-
-            if(errorMessages.length > 0){
+          if(errorMessages.length > 0){
             errDiv.innerHTML = errorMessages.join("<br>");
            }else{
             errDiv.innerHTML = "Registration Success";
